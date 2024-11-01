@@ -57,6 +57,8 @@ public class InsuranceContractController {
         Link linkSelf = WebMvcLinkBuilder.linkTo(methodOn(InsuranceContractController.class).getInsuranceContractById(savedContract.getId())).withSelfRel();
         model.add(linkSelf);
 
+        Link linkDelete = linkTo(methodOn(InsuranceContractController.class).deleteInsuranceContractById(savedContract.getId())).withSelfRel();
+        model.add(linkDelete);
         return model;
     }
 
@@ -99,9 +101,12 @@ public class InsuranceContractController {
 
     // Get expired insurance contracts
     @GetMapping("/expired")
-    public ResponseEntity<List<InsuranceContractDTO>> getExpiredContracts() {
+    public CollectionModel<InsuranceContractDTO> getExpiredContracts(){
         List<InsuranceContractDTO> expiredContracts = insuranceContractService.getExpiredContracts();
-        return ResponseEntity.ok(expiredContracts);
+        Link link = WebMvcLinkBuilder.linkTo(InsuranceContractController.class).withRel("allExpiredContracts");
+        CollectionModel<InsuranceContractDTO> resultsExpired = CollectionModel.of(expiredContracts, link);
+
+        return resultsExpired;
     }
 
     // Delete an insurance contract by ID
